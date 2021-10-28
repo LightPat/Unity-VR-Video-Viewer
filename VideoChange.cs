@@ -5,7 +5,7 @@ using UnityEngine.Video;
 
 public class VideoChange : MonoBehaviour
 {
-	//Used on a gameobject to change the video clip playing in the skybox when it is clicked
+
 	VideoPlayer videoPlayer;
 	public VideoClip newClip;
 
@@ -19,21 +19,20 @@ public class VideoChange : MonoBehaviour
 		// Check for mouse input
 		if (Input.GetMouseButton(0))
 		{
-			Debug.Log("Working");
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 
 			Physics.Raycast(ray, out hit);
 			
-			if (hit.collider.gameObject.tag == "VideoChange")
+			if (hit.collider.gameObject.CompareTag("VideoChange"))
 			{
 				Debug.Log("COLLISION detected...");
-				activate();
+				Activate();
 			}
 		}
 	}
 
-	public void activate() {
+	public void Activate() {
 		Debug.Log("Changing Video");
 		videoPlayer.clip = newClip;
 	}
