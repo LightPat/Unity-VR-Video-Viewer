@@ -7,27 +7,42 @@ using Valve.VR.Extras;
 
 public class LaserHandler : MonoBehaviour
 {
-	//Uses the built in laser pointer functionality that comes with steamvr package
-    //to create a collision detection system just like a mouse click
     public SteamVR_LaserPointer laserPointerLeft;
     public SteamVR_LaserPointer laserPointerRight;
-    public GameObject eventSystem;
+
+    private GameObject interactableMaker;
 
     void Awake()
     {
         laserPointerLeft.PointerClick += PointerClick;
-		laserPointerRight.PointerClick += PointerClick;
+	laserPointerRight.PointerClick += PointerClick;
+
+	GameObject[] array = GameObject.FindGameObjectsWithTag("InteractableCreator");
+	foreach (GameObject g in array) {
+		interactableMaker = g;
+	}
     }
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
-		GameObject clickedObject = e.target.gameObject;
+	GameObject clickedObject = e.target.gameObject;
 
-	    Debug.Log(clickedObject.name);
+	Debug.Log("Collided with: " + clickedObject.name);
+	
+	if(clickedObject.tag == "VideoChange") {
+		clickedObject.GetComponent<VideoChange>().Activate();
+	}
+	
+	//UI is ID'd 5 in the layers
+	if(clickedObject.layer == 5) {
+		Debug.Log("This is a UI element. WE ONLY SUPPORT BUTTONS RIGHT NOW");
+		clickedObject.GetComponent<Button>().onClick.Invoke();
+	}
 
-	    if(clickedObject.tag == "VideoChange") {
-		    clickedObject.GetComponent<VideoChange>().activate();
-	    }
+	// and the scene is coming from the setup wizard
+	if(interactableMaker != null) {
+		Debug.Log(e);
+	}
     }
 
     public void PointerInside(object sender, PointerEventArgs e)
