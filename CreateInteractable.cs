@@ -28,5 +28,10 @@ public class CreateInteractable : MonoBehaviour
 
             GameObject.Instantiate(VideoChangeInteractable, point, Quaternion.identity);
         }
-    }
+   }
+
+
+   public void instantiateAtPoint(Vector3 point) {
+	GameObject.Instantiate(VideoChangeInteractable, point, Quaternion.identity);
+   }
 }

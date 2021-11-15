@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 
-public class VideoChange : MonoBehaviour
+public class LaserVideoChange : MonoBehaviour
 {
 
 	VideoPlayer videoPlayer;
@@ -18,24 +17,20 @@ public class VideoChange : MonoBehaviour
 	void Update()
 	{
 		// Check for mouse input
+/*		
 		if (Input.GetMouseButton(0))
 		{
-			Debug.Log("Working");
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 
 			Physics.Raycast(ray, out hit);
-			
-			if (hit.collider.gameObject.CompareTag("VideoChange"))
+
+			if (hit.collider.gameObject.tag == "VideoChange")
 			{
 				Debug.Log("COLLISION detected...");
-				Activate();
+				videoPlayer.clip = newClip;
 			}
 		}
-	}
-
-	public void Activate() {
-		Debug.Log("Changing Video");
-		videoPlayer.clip = newClip;
+*/
 	}
 }
