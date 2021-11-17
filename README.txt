@@ -1,1 +1,1 @@
-This is the code used in the first live demo on October 28, 2021 for CS 470
+This are scripts used in Unity for VR touring software that students at John Carroll University are developing.
