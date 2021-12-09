@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using SimpleFileBrowser;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,67 +11,82 @@ using UnityEngine.EventSystems;
 public class File_Explorer : MonoBehaviour
 {
    
-    public string path;
     //Change this reference later, don't want to have to assign canvas everytime
-    public GameObject canvas;
-    [SerializeField]
+    public GameObject objectDisplay;
     public GameObject prefab;
+	public static string path;
+	public static string firstVideoName;
 
+	private GameObject eventSystem;
+	private List<string> fileNames;
+	private List<float> fileSizes;
 
-    void Start() {
-	//set the path in the inspector
+	public void browse()
+    {
+		eventSystem = GameObject.Find("EventSystem");
+		eventSystem.SetActive(false);
 
-	//get the directory data (all files in directory)
-	var folder = new DirectoryInfo(path);
-        var fileInfo = folder.GetFiles();
+		StartCoroutine(ShowLoadDialogCoroutine());
+	}
 
-	List<string> fileNames = new List<string>();
-	List<float> fileSizes = new List<float>();
-
-	//get the file attributes (name, length, etc)
-	foreach (var file in fileInfo) {
-		if (file.Extension == ".mp4") {
-			fileNames.Add(file.Name);
-			//convert to megabytes
-			fileSizes.Add((float)file.Length/1048576);
+	public void displayToCanvas()
+    	{
+		// Fixes the path if the user selects a file as the end of the path instead of just the folder
+		if (!Directory.Exists(path))
+        	{
+			string[] folders = path.Split('\\');
+			string lastFileName = folders[folders.Length-1];
+			path = path.Replace("\\" + lastFileName, "");
 		}
+
+		fileSizes = new List<float>();
+		fileNames = new List<string>();
+
+		//get the directory data (all files in directory)
+		var folder = new DirectoryInfo(path);
+		var fileInfo = folder.GetFiles();
+
+		//get the file attributes (name, length, etc)
+		foreach (var file in fileInfo)
+		{
+			if (file.Extension == ".mp4")
+			{
+				fileNames.Add(file.Name);
+				//convert to megabytes
+				fileSizes.Add((float)file.Length / 1048576);
+			}
+		}
+
+		GameObject countDisplay = GameObject.Find("VideoCount");
+		countDisplay.GetComponent<Text>().text = "Video Count: " + fileNames.Count.ToString();
+
+		GameObject dropdownMenu = GameObject.Find("Dropdown");
+		dropdownMenu.GetComponent<Dropdown>().AddOptions(fileNames);
+
+		firstVideoName = fileNames[0];
+
 	}
 
-	var yOffset = 25;
+	IEnumerator ShowLoadDialogCoroutine()
+    	{
+		// Only show mp4 files and folders
+		FileBrowser.SetFilters(true, new FileBrowser.Filter("Videos", ".mp4"));
 
-	for(int i = 0; i < fileNames.Count; i++) {
+		FileBrowser.SetDefaultFilter(".mp4");
+		// Show a load file dialog and wait for a response from user
+		// Load file/folder: both, Allow multiple selection: true
+		// Initial path: default (Documents), Initial filename: empty
+		// Title: "Load File", Submit button text: "Load"
+		yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.FilesAndFolders, true, null, null, "Load Files and Folders", "Load");
 
-		var xOffset = -50;
-
-		//displays text prefabs as file NAMES
-		var prefabInstance = Instantiate(prefab);
-		prefabInstance.transform.SetParent(canvas.transform, false);
-
-		var textComponent = prefabInstance.GetComponent<Text>();
-		textComponent.text = fileNames[i];
-
-		// changes transform by the offset on the x axis
-		prefabInstance.transform.Translate(new Vector3(xOffset, yOffset, 0));
-
-		xOffset += 75;
-
-		//displays text prefabs as file SIZES
-		prefabInstance = Instantiate(prefab);
-		prefabInstance.transform.SetParent(canvas.transform, false);
-	
-		textComponent = prefabInstance.GetComponent<Text>();
-		textComponent.text = fileSizes[i].ToString() + " MB";
-		
-		prefabInstance.transform.Translate(new Vector3(xOffset, yOffset, 0));
-
-		yOffset -= 10;
+		// If the file browser has been closed
+		if (FileBrowser.Success)
+		{
+			path = FileBrowser.Result[0];
+		}
+		eventSystem.SetActive(true);
+		displayToCanvas();
 	}
-
-	//Prints name and size to console
-	for (int i = 0; i < fileNames.Count; i++) {
-		Debug.Log("Name: " + fileNames[i] + "    Size: " + fileSizes[i]);
-	}
-    }    
 }
 
 
