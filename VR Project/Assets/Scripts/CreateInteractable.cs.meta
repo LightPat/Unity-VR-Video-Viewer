@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: a2e138c938f60914386125f09edc87cd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - VideoChangeInteractable: {fileID: 4964635583151283711, guid: fc075f949a5770c428a6264d5606fa8b, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
